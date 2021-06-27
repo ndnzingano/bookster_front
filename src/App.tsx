@@ -1,38 +1,29 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { useAuth } from './providers/auth';
-import { getAllBooks } from './services/servicesBooks';
-// import { getAuthorization } from './utils/auth';
+import React from 'react'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core'
+import { orange, teal } from '@material-ui/core/colors';
+import { ViewLogin } from './views/ViewLogin/ViewLogin';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { ViewNewUser } from './views/ViewNewUser/ViewNewUser';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: teal,
+    secondary: orange
+  }
+})
+
 
 function App() {
-
-  const { handleToken, token, setLogin, login } = useAuth()
-
-  // const login = {
-  //   "email": "nadine.zingano@gmail.com",
-  //   "password": "123nadine"
-  // }
-
-  useEffect(() => {
-    if(token !== '')
-      getAllBooks(token)
-  }, [token])
-
   return (
-    <div>
-      <h1>hi</h1>
-      <input type='text' 
-      onBlur={(e) => setLogin({...login, email: e.target.value})}
-      />
-      <input type='text' 
-      onBlur={(e) => setLogin({...login, password: e.target.value})}
-      />
-      <button
-      onClick={() => handleToken(login)}      
-      >
-        click token
-      </button>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Switch>
+          <Route path='/' exact component={ViewLogin} />
+          <Route path='/signup' exact component={ViewNewUser} />          
+          <Route path='/home' exact component={ViewNewUser} />
+        </Switch>
+      </Router>
+    </ThemeProvider>
   );
 }
 

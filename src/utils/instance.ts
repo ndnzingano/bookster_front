@@ -6,7 +6,6 @@ export const instance = axios.create({
   baseURL: 'http://localhost:2100/api',
   timeout: 10000,
   headers: {
-    'x-auth-token': '',
     'accept': 'application/json',
     'access-Control-Allow-Origin': '*'
   }
