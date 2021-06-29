@@ -4,6 +4,7 @@ import { orange, teal } from '@material-ui/core/colors';
 import { ViewLogin } from './views/ViewLogin/ViewLogin';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { ViewNewUser } from './views/ViewNewUser/ViewNewUser';
+import { ViewHome } from './views/ViewHome/ViewHome';
 
 const theme = createMuiTheme({
   palette: {
@@ -20,7 +21,7 @@ function App() {
         <Switch>
           <Route path='/' exact component={ViewLogin} />
           <Route path='/signup' exact component={ViewNewUser} />          
-          <Route path='/home' exact component={ViewNewUser} />
+          <Route path='/home' exact component={ViewHome} />
         </Switch>
       </Router>
     </ThemeProvider>

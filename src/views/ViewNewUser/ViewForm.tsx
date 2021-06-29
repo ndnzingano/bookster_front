@@ -15,9 +15,7 @@ const useStyle = makeStyles({
     width: '800px',
     height: '470px',
     marginTop: '-250px',
-    marginLeft: 'calc(100% - 1150px)',
     zIndex: 0
-
   }, 
   root: {
     height: '100%',

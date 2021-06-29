@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
+import { getAllBooks } from "../services/servicesBooks";
 import { getUserByEmail, postUser } from "../services/servicesUser";
+import { IBooks } from "../types/IBook";
 import { IBooksterProvider } from "../types/IBooksterProvider";
 import { ILogin, IUser } from "../types/IUser";
 import { getAuthorization } from "../utils/auth";
@@ -9,13 +11,16 @@ export const AuthContext = createContext<IBooksterProvider>({
   login: null,
   authorization: null,
   user: null,
+  books: null,
   setUser: null,
   setAuthorization: null,
   setLogin: null,
   setToken: null,
+  setBooks: null,
   handleToken: null, 
   handleLogin: null,
-  handleAddUser: null
+  handleAddUser: null,
+  handleGetAllBooks: null
 });
 
 
@@ -34,8 +39,10 @@ export const AuthProvider = (props: any) => {
       birthday: new Date
   })
 
-  console.log('authorization :>> ', authorization);
-  console.log('user :>> ', user);
+  const [books, setBooks] = useState<IBooks>({
+    books: []
+  })
+
   async function handleToken(login: ILogin) {
 		const response = await getAuthorization(login)
 		.then((response) => {
@@ -91,22 +98,38 @@ export const AuthProvider = (props: any) => {
     console.log('user :>> ', user);
 
   }
+
+  const handleGetAllBooks = async () => {
+       const faketoken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZDNkM2VmLTc0ZWEtNDkxNy1iMGM2LTJlZjBmMjc4ZDhmYSIsIm5hbWUiOiJOYWRpbmUgWmluZ2FubyIsImlhdCI6MTYyNDkyODQ2MCwiZXhwIjoxNjI0OTMyMDYwfQ.yr5g5xzca-R2tukGTN-7X2reW-_kavvM48bOVO52Nn8'
+
+       const response = await getAllBooks(faketoken)
+       .then((response) => {
+           if (response) {
+             setBooks(response)
+           }
+       }) 
+       .catch(err => console.log('erro', err));
+  };
+  
     
 
   const states = {
     token, 
     login,
     authorization, 
-    user
+    user,
+    books
   };
   const actions = {
     handleToken, 
     handleLogin, 
     handleAddUser,
+    handleGetAllBooks,
     setToken,
     setLogin,
     setAuthorization, 
-    setUser
+    setUser,
+    setBooks
   }
 
   return (

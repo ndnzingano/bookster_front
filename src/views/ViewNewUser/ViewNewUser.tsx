@@ -6,7 +6,7 @@ import { ViewForm } from "./ViewForm";
 const useStyles = makeStyles({
   bkgColor:{
     backgroundColor: teal[100], 
-    height: 'calc(100vh - 340px)',
+    height: '400px',
     width: '100%'    
   }, 
   root: {
@@ -26,7 +26,9 @@ export const ViewNewUser = () => {
     className={root}
     >
       <Box className={bkgColor}></Box>
-      <ViewForm />      
+      <Box component='div' style={{margin: 'auto'}}>
+        <ViewForm />
+      </Box>      
     </Grid>
   )
 }

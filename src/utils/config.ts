@@ -11,6 +11,8 @@ export const variables = {
   registrationLabel: 'Create your own profile',
   confirmLabel: 'Confirm', 
   logoShorthand: '.B',
-  
+  booksLabel: 'Books', 
+  reviewsLabel: 'Reviews',
+  settingsLabel: 'Settings'
   
 }
