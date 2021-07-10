@@ -35,7 +35,13 @@ const useStyles = makeStyles({
     margin: 'auto',
     height: '100px',
     width: '100px'
-  }
+  }, 
+  // '@global': {
+  //   '.MuiGrid-root': {
+  //     position: 'fixed', 
+  //     height: '100%'
+  //   }
+  //}
 });
 
 interface TabPanelProps {
@@ -103,29 +109,30 @@ export const ViewSideBar = (params) => {
       <Grid
         direction='row'
       >
-
-      <Box style={{height:'180px', width: '270px', backgroundColor: teal[200]}}>
-        <Box style={{paddingTop: '50px'}}>
-          <Avatar className={avatar}>
-            <Typography variant='h3'>
-              NZ
-            </Typography>
-          
-          </Avatar>
+        <Box style={{position: 'fixed', height: '100%'}}>
+          <Box style={{height:'180px', width: '270px', backgroundColor: teal[200]}}>
+            <Box style={{paddingTop: '50px'}}>
+              <Avatar className={avatar}>
+                <Typography variant='h3'>
+                  NZ
+                </Typography>
+              
+              </Avatar>
+            </Box>
+          </Box>
+          <Tabs
+            orientation="vertical"
+            variant="scrollable"
+            value={value}
+            onChange={handleChange}
+            aria-label="Vertical tabs example"
+            className={tabs}
+          >
+            <Tab className={tab} label={booksLabel} {...a11yProps(0)} />
+            <Tab className={tab} label={reviewsLabel} {...a11yProps(1)} />
+            <Tab className={tab} label={settingsLabel} {...a11yProps(2)} />
+          </Tabs>
         </Box>
-      </Box>
-      <Tabs
-        orientation="vertical"
-        variant="scrollable"
-        value={value}
-        onChange={handleChange}
-        aria-label="Vertical tabs example"
-        className={tabs}
-      >
-        <Tab className={tab} label={booksLabel} {...a11yProps(0)} />
-        <Tab className={tab} label={reviewsLabel} {...a11yProps(1)} />
-        <Tab className={tab} label={settingsLabel} {...a11yProps(2)} />
-      </Tabs>
       </Grid>
       <TabPanel value={value} index={0}>
         {booksLabel}

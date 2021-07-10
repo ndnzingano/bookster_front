@@ -11,6 +11,15 @@ export const instance = axios.create({
   }
 });
 
+// export const instance2 = axios.create({
+//   baseURL: 'http://localhost:2100/api',
+//   timeout: 10000,
+//   headers: {
+//     'access-Control-Allow-Origin': '*'
+    
+//   }
+// });
+
 export const instanceAuth = axios.create({
   baseURL: 'http://localhost:2100/api/auth',
   timeout: 10000,
