@@ -13,6 +13,21 @@ export const variables = {
   logoShorthand: '.B',
   booksLabel: 'Books', 
   reviewsLabel: 'Reviews',
-  settingsLabel: 'Settings'
+  settingsLabel: 'Settings',
+  submitLabel: 'Submit',
+  fileNotSupported: 'File not supported',
+  newBooksLabel: 'Add new book',
+  titleLabel: 'Title',
+  authorFirstNameLabel: 'Author Name',
+  authorLastNameLabel: 'Author Last Name',
+  descriptionLabel: 'Description',
+  isbnLabel: 'ISBN',
+  pagesLabel: 'Pages',
+  newReviewLabel: 'Add a new review',
+  chooseBookLabel: 'Choose a book',
+  startDateLabel: 'Start date',
+  finishDateLabel: 'Finish date',
+  ratingLabel: 'Rating',
+  reviewLabel: 'Give your opinion!'
   
 }

@@ -1,14 +1,13 @@
 import { Box, Grid, IconButton, makeStyles } from "@material-ui/core";
-import { cyan, teal } from "@material-ui/core/colors";
+import { amber, cyan, teal } from "@material-ui/core/colors";
 import React from "react";
-import { ViewAddBookForm } from "./ViewAddBookForm";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from "react-router-dom";
-import { useAuth } from "../../../../providers/auth";
+import { ViewAddReviewForm } from "./ViewAddReviewForm";
 
 const useStyles = makeStyles({
   bkgColor:{
-    backgroundColor: teal[100], 
+    backgroundColor: amber[100], 
     height: '400px',
     width: '100%'    
   }, 
@@ -19,10 +18,9 @@ const useStyles = makeStyles({
   }
 })
 
-export const ViewAddBook = () => {
+export const ViewAddReview = () => {
   const history = useHistory()
   const {bkgColor, root } = useStyles()
-  const {setBookUpdate} = useAuth()
 
 
   return (
@@ -32,10 +30,7 @@ export const ViewAddBook = () => {
     >
       <Box className={bkgColor}>
         <IconButton
-          onClick={() => {
-            history.push('/home')
-            setBookUpdate(null)
-          }}
+          onClick={() => history.push('/home')}
           style={{
             backgroundColor: 'white',
             marginTop: '20px',
@@ -46,7 +41,7 @@ export const ViewAddBook = () => {
         </IconButton>
       </Box>
       <Box component='div' style={{margin: 'auto'}}>
-        <ViewAddBookForm />
+        <ViewAddReviewForm />
       </Box>      
     </Grid>
   )

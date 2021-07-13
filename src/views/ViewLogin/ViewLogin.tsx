@@ -48,21 +48,6 @@ export const ViewLogin = () => {
         container
       >
         <Box component='div' className={colorBkg}>
-          <Grid>
-
-            <Typography style={{fontFamily: 'Castoro', fontSize: '3rem', paddingTop: '200px', paddingLeft: '100px'}}>{'Bookstr'}</Typography>
-            <Grid
-              container
-              direction='row'
-              justify='flex-start'
-              alignItems='flex-start'
-            >
-              <Typography>your</Typography>
-              <Books />
-              <Toread /> 
-              <Typography>management tool </Typography>
-            </Grid>
-          </Grid>
         </Box>
         <ViewForm />  
       </Grid>

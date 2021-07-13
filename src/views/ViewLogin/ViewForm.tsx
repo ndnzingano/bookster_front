@@ -1,5 +1,5 @@
 import { Button, Grid, Link, makeStyles, TextField, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../../providers/auth";
 import { variables } from "../../utils/config";
 import { useHistory } from 'react-router-dom'
@@ -41,7 +41,20 @@ export const ViewForm = () => {
   const {root, gridText, gridButton, logo} = useStyle()
   const {emailLabel, loginLabel, passwordLabel, signInLabel, logoShorthand} = variables
 
-  const {handleLogin, setLogin, login} = useAuth()
+  const {handleLogin, setLogin, login, handleToken, token, authorization} = useAuth()
+
+  useEffect(() => {
+    if(token !== null) {
+      handleLogin(login)
+    }
+
+  }, [token])
+
+  useEffect(() => {
+
+    if(authorization)
+     history.push('/home')
+  },[authorization])
 
 
   return (
@@ -69,6 +82,7 @@ export const ViewForm = () => {
       <Grid item className={gridText}>  
         <TextField 
         fullWidth
+        type='password'
           variant='outlined' 
           color='primary' 
           label={passwordLabel}
@@ -80,7 +94,11 @@ export const ViewForm = () => {
           fullWidth
           variant='contained' 
           color='primary'
-          onClick={() => handleLogin(login)}
+          onClick={async () => {
+            await handleToken(login)
+         
+           
+          }}
         >
           {loginLabel}
         </Button>

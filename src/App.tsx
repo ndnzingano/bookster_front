@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { ViewNewUser } from './views/ViewNewUser/ViewNewUser';
 import { ViewHome } from './views/ViewHome/ViewHome';
 import { ViewAddBook } from './views/ViewHome/ViewMain/ViewFooter/ViewAddBook';
+import { ViewAddReview } from './views/ViewHome/ViewMain/ViewFooter/ViewAddReview';
 
 const theme = createMuiTheme({
   palette: {
@@ -24,7 +25,8 @@ function App() {
           <Route path='/signup' exact component={ViewNewUser} />          
           <Route path='/home' exact component={ViewHome} />
           <Route path='/add/books' exact component={ViewAddBook} />
-
+          <Route path='/add/reviews' exact component={ViewAddReview} />
+          <Route path='/update/book' exact component={ViewAddBook} />
         </Switch>
       </Router>
     </ThemeProvider>

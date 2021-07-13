@@ -4,8 +4,9 @@ import clsx from 'clsx';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../../../providers/auth";
-import { IBook } from "../../../../types/IBook";
-import { BookSharp } from '@material-ui/icons';
+import EditIcon from '@material-ui/icons/Edit';
+import { amber } from '@material-ui/core/colors';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -13,10 +14,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '320px',
       marginTop: '30px',
       marginLeft: '40px', 
-
+      // minHeight: '550px'
     },
     media: {
-      height: 0,
+      height: '100px',
       paddingTop: '56.25%', // 16:9
     },
     expand: {
@@ -41,20 +42,37 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const CardComponent = (book: any, i: any) => {
   // console.log('book :>> ', book);
-  const { reviews, handleGetReviewByBookId, books, ratings, loading, setLoading, handleRatings } = useAuth()
-
-
-  useEffect(() => {
-    handleGetReviewByBookId(book.book.id)    
-  }, [])
+  const { reviews, books, ratings, loading, setBookUpdate } = useAuth()
+  const history = useHistory()
+  
  
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
 
+  const [image, setImage] = useState(null)
 
+  const handleImageChange = () => {
+    const selected = book.book.coverImage
+    console.log('selected :>> ', selected);
 
+    const ALLOWED_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
 
+    if(selected && ALLOWED_TYPES.includes(selected.type)) {
+      let reader = new FileReader()
 
+      reader.readAsText = () => {
+        setImage(selected)
+        
+      
+      }
+   
+    } else {
+    }
+  };
+
+  useEffect(() => {
+    handleImageChange()
+  }, [])
   return( 
     <> 
         <Card className={classes.root}>
@@ -64,24 +82,39 @@ export const CardComponent = (book: any, i: any) => {
         />
         <CardMedia
           className={classes.media}
-          image="/static/images/cards/paella.jpg"
+          image={`C:/Users/nadin/Documents/Projetos/ppi2/library_backend/utils/img/books/${book.book.coverImage}`}
           title="Paella dish"
         />
-        <CardContent>         
-          <Typography variant="body2" color="textSecondary" component="p">
-            {`Pages:${book.book.pagesNr} | ISBN: ${book.book.isbn}`}
-          </Typography>
-          {
-            ratings.map(rating => {
-             if(book.book.id === rating.id){
-              return (
-                <Box>
-                  <Rating name="book-review" value={rating.rating} readOnly/>
-                </Box>
-                )                           
-               }  
-            })           
-          }
+       {/* <div
+       style={{
+        background:  `url("C:/Users/nadin/Documents/Projetos/ppi2/library_backend/utils/img/books/${book.book.coverImage}") no-repeat center/cover` ,
+        height: '230px',
+        width: '150px',
+        marginLeft: '70px'
+       }}>
+
+       </div> */}
+
+        <CardContent>
+          <Grid
+            container
+            direction='row'
+          >         
+            <Typography variant="body2" color="textSecondary" component="p"
+            
+            style={{width: '200px', paddingTop: '20px', paddingRight: '33px'}}
+            >
+              {`Pages:${book.book.pagesNr} | ISBN: ${book.book.isbn}`}
+            </Typography>
+          <IconButton
+            onClick={() => {
+              history.push('/update/book')
+              setBookUpdate(book.book)
+            }}
+          >
+            <EditIcon style={{fontSize: '30px', color: amber[700]}}/>
+          </IconButton>
+         </Grid>
         </CardContent>
         <CardActions disableSpacing>
           <IconButton
@@ -97,7 +130,7 @@ export const CardComponent = (book: any, i: any) => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography paragraph>futura descrição</Typography>
+            <Typography paragraph>{book.book.description}</Typography>
           </CardContent>
         </Collapse>
       </Card>

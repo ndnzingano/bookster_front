@@ -12,6 +12,11 @@ export interface IBooksterProvider {
   reviews: IReviews;
   ratings: IRating[];
   loading: boolean;
+  bookDone: boolean;
+  reviewDone: boolean;
+  bookUpdate: IBook;
+
+  setBookUpdate: React.Dispatch<React.SetStateAction<IBook>>;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
   setAuthorization: React.Dispatch<React.SetStateAction<boolean>>;
   setToken: React.Dispatch<React.SetStateAction<any>>;
@@ -20,13 +25,17 @@ export interface IBooksterProvider {
   setReviews: React.Dispatch<React.SetStateAction<IReviews>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setRatings: React.Dispatch<React.SetStateAction<IRating[]>>;
+  setReviewDone: React.Dispatch<React.SetStateAction<boolean>>
+  setBookDone: React.Dispatch<React.SetStateAction<boolean>>
+
   handleToken: (login: ILogin) => void;
   handleLogin: (login: ILogin) => void;
   handleAddUser: (user: IUser) => void;
   handleGetAllBooks: () => void;
-  handleGetAllReviews: () => void;
-  handleGetReviewByBookId: (id: string) => void;
-  handleRatings: (id: string) => void;
   handlePostBook: (files: {}, book: IBook) => void;
+  handlePostReview: (review: IReview) => void;
+  handleUpdateBook:  (files: {}, book: IBook) => void;
+  handleDeleteBook: (book: IBook) => void
+
 
 } 

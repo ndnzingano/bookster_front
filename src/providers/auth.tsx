@@ -1,14 +1,17 @@
 import { rawListeners } from "process";
 import React, { createContext, useContext, useState } from "react";
 import { setFlagsFromString } from "v8";
-import { getAllBooks, postBook } from "../services/servicesBooks";
-import { getAllReviews, getReviewByBookId } from "../services/servicesReviews";
+import { deleteBook, getAllBooks, postBook, updateBook, updateBookRatings } from "../services/servicesBooks";
+import { getAllReviews, getReviewByBookId, getReviewByRating, postReview } from "../services/servicesReviews";
 import { getUserByEmail, postUser } from "../services/servicesUser";
 import { IBook, IBooks } from "../types/IBook";
 import { IBooksterProvider } from "../types/IBooksterProvider";
 import { IReview, IReviews } from "../types/IReview";
 import { ILogin, IUser } from "../types/IUser";
 import { getAuthorization } from "../utils/auth";
+import {v4 as uuidv4 } from 'uuid'
+import { useHistory } from "react-router-dom";
+
 
 export const AuthContext = createContext<IBooksterProvider>({
   token: null,
@@ -19,6 +22,10 @@ export const AuthContext = createContext<IBooksterProvider>({
   reviews:null,
   ratings: null,
   loading: null,
+  bookDone: null,
+  reviewDone: null, 
+  bookUpdate: null, 
+  setBookUpdate: null,
   setReviews: null,
   setUser: null,
   setAuthorization: null,
@@ -27,26 +34,29 @@ export const AuthContext = createContext<IBooksterProvider>({
   setBooks: null,
   setLoading: null,
   setRatings: null,
+  setReviewDone: null,
+  setBookDone: null,
   handleToken: null, 
   handleLogin: null,
   handleAddUser: null,
   handleGetAllBooks: null,
-  handleGetAllReviews: null,
-  handleGetReviewByBookId: null,
-  handleRatings: null,
-  handlePostBook: null
+  handlePostBook: null,
+  handlePostReview: null,
+  handleUpdateBook: null,
+  handleDeleteBook: null
 });
 
 export interface IRating {
   id: string,
-  rating: number
+  rating: []
 }
 
 
 export const AuthProvider = (props: any) => {
 
-  const faketoken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZDNkM2VmLTc0ZWEtNDkxNy1iMGM2LTJlZjBmMjc4ZDhmYSIsIm5hbWUiOiJOYWRpbmUgWmluZ2FubyIsImlhdCI6MTYyNTk0MDQ1MiwiZXhwIjoxNjI1OTQ0MDUyfQ.CepgiI3cIhzK7TGQZy-gzHewiKcYfajz2M8CiF_b8o4"
+  // const faketoken =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZDNkM2VmLTc0ZWEtNDkxNy1iMGM2LTJlZjBmMjc4ZDhmYSIsIm5hbWUiOiJOYWRpbmUgWmluZ2FubyIsImlhdCI6MTYyNjA1MzE5NiwiZXhwIjoxNjI2MDU2Nzk2fQ.jLaaaDwYxNN55cWwJTaPNOML6oFWhUIKjNsF9gKsKmY"
 
+  const history = useHistory()
 
   const [token, setToken] = useState(null) 
   const [login, setLogin] = useState<ILogin>({email: '', password: ''})
@@ -65,6 +75,8 @@ export const AuthProvider = (props: any) => {
     books: []
   })
 
+  const [bookUpdate, setBookUpdate] = useState<IBook>(null)
+
   const [reviews, setReviews] = useState<IReviews>({
     reviews: []
   })
@@ -73,22 +85,27 @@ export const AuthProvider = (props: any) => {
 
   const [ratings, setRatings] = useState<IRating[]>([])
 
+  const [bookDone, setBookDone] = useState(false)
+
+  const [reviewDone, setReviewDone] = useState(false)
+
   async function handleToken(login: ILogin) {
 		const response = await getAuthorization(login)
 		.then((response) => {
 				if (response) {
 					setToken(response)
-				}
+
+         
+				} 
 		}) 
-		.catch(err => console.log('erro', err));
+		.catch(err =>{
+      return false
+    });
 	}
 
   const handleLogin = async (login?: ILogin) => {
-    await handleToken(login)
-
-    if(!token) {
+    if(!handleToken) {
       console.log('erro no token :>> ');
-      //criar msg de erro de login
     } else {
       const response = await getUserByEmail(login, token)
       .then((response) => {
@@ -110,7 +127,9 @@ export const AuthProvider = (props: any) => {
   
           }
       }) 
-      .catch(err => console.log('erro', err));
+      .catch(err => {
+       
+      });
     }
 
 
@@ -130,8 +149,10 @@ export const AuthProvider = (props: any) => {
   }
 
   const handleGetAllBooks = async () => {
+    let fake="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZDNkM2VmLTc0ZWEtNDkxNy1iMGM2LTJlZjBmMjc4ZDhmYSIsIm5hbWUiOiJOYWRpbmUgWmluZ2FubyIsImlhdCI6MTYyNjE0NDA4NCwiZXhwIjoxNjI2MTQ3Njg0fQ.KIbhB-m8tYWxmU3Pa3lc9f9lbWHSYONyvvdhRM6YtLk"
 
-       const response = await getAllBooks(faketoken)
+
+       const response = await getAllBooks(token)
        .then((response) => {
            if (response) {
              setBooks(response)
@@ -140,89 +161,57 @@ export const AuthProvider = (props: any) => {
        .catch(err => console.log('erro', err));
   };
 
-  const handleGetReviewByBookId = async (id: string) => {
-    
-    const response = await getReviewByBookId(faketoken, id)
-    .then((response) => {
-        if (response.status === 200) {
-          if(response.result.length > 1) {
-              let total = 0;
-              for(let i = 0; i < response.result.length; i++) {
-                total += response.result[i].rating;
-              }
-              let avg = total / response.result.length;
-
-              response.result.forEach(result => {
-                let isInArray = ratings.filter(rating => rating.id === result.book)
-
-                if(isInArray.length === 0) {
-                  return ratings.push({
-                    id: response.result[0].book,
-                    rating: avg
-                  })
-                }              
-             
-              })
-              
-          } else {
-            response.result.forEach(result => {
-              let isInArray = ratings.filter(rating => rating.id === result.book)
-
-              if(isInArray.length === 0) {
-                return setRatings([...ratings, {
-                  id: response.result[0].book,
-                  rating: response.result[0].rating
-                }])
-                
-              }              
-           
-            })          
-          }
-
-        }
-    }) 
-    .catch(err => err);
-  }
-
-  const handleGetAllReviews = async () => {
-    
-    const response = await getAllReviews(faketoken)
-    .then((response) => {
-        if (response) {
-          // setBooks(response)
-          // console.log('response :>> ', response);
-         console.log('object :>> ', response.reviews.filter(review => {return review.book })); 
-
-
-         response.reviews.filter(review => {return review.book})
-          
-        }
-    }) 
-    .catch(err => console.log('erro'));
-  }
-
-  const handleRatings = async (id: string) => {
-    await handleGetReviewByBookId(id)
-    if(ratings.length > 0) {
-      // console.log('ratings :>> ', ratings);
-
-      setLoading(false)
-      return ratings
-    }
-  }
-
    const handlePostBook = async (files: {}, book:IBook) => {
 
-    const response = await postBook(faketoken, files, book)
+    book.id = uuidv4();
+    const response = await postBook(token, files, book)
 		.then((response) => {
 				if (response) {
-          console.log('response :>> ', response);
+          setBookDone(true)
 				}
 		}) 
 		.catch(err => console.log('erro', err));
 	}
-    
 
+  const handlePostReview = async (review: IReview) => {
+    const response = await  postReview(token, review)
+		.then((response) => {
+				if (response.status === 201) {
+          setReviewDone(true)
+        
+				} else {
+          setReviewDone(false)
+        }
+		}) 
+		.catch(err => console.log('erro', err));
+  }
+
+  const handleUpdateBook = async (file: any, book: IBook) => {
+    
+    const response = updateBook(file, book, token)
+    .then((response) => {
+      if (response) {
+        setBookUpdate(null)
+        setBookDone(true)
+      }}
+
+    )
+    .catch(error => { return error})
+  }
+
+  const handleDeleteBook = (book) => {
+    const response = deleteBook(book, token)
+    .then((response) => {
+      if(response) {
+        setBookUpdate(null)
+        setBookDone(true)
+      }
+
+      }
+
+    )
+    .catch(error => { return error})
+  }
   
   
 
@@ -239,17 +228,22 @@ export const AuthProvider = (props: any) => {
     books,
     reviews,
     ratings, 
-    loading
+    loading, 
+    bookDone,
+    reviewDone,
+    bookUpdate
   };
   const actions = {
     handleToken, 
     handleLogin, 
     handleAddUser,
     handleGetAllBooks,
-    handleGetAllReviews,
-    handleGetReviewByBookId,
-    handleRatings,
+    handleUpdateBook,
+    // handleGetReviewByBookId,
+    // handleRatings,
     handlePostBook,
+    handlePostReview,
+    handleDeleteBook,
     setToken,
     setLogin,
     setAuthorization, 
@@ -257,7 +251,10 @@ export const AuthProvider = (props: any) => {
     setBooks,
     setReviews,
     setLoading,
-    setRatings
+    setRatings,
+    setReviewDone,
+    setBookUpdate,
+    setBookDone
   }
 
   return (
